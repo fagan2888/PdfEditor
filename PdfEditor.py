@@ -12,13 +12,13 @@ class PdfEditor(object):
     Origin is on LOWER left corner.
     '''
 
-    def __init__(self, filename, pageSize):
+    def __init__(self, filename, pageSize, strict=True):
         '''Args:
             filename (str): Location of the original PDF.
             pageSize (str): Either letter or legal.
         '''
         super(PdfEditor, self).__init__()
-        self.pdf = PdfFileReader(filename).getPage(0)
+        self.pdf = PdfFileReader(filename,strict=strict).getPage(0)
         self.content = StringIO.StringIO()
         self.parser = canvas.Canvas(self.content, pagesize=(letter if pageSize == 'letter' else legal))
 
