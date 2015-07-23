@@ -2,6 +2,7 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 import StringIO
 from reportlab.lib.pagesizes import letter, legal
 from reportlab.pdfgen import canvas
+import io
 
 
 class PdfEditor(object):
@@ -18,7 +19,7 @@ class PdfEditor(object):
             pageSize (str): Either letter or legal.
         '''
         super(PdfEditor, self).__init__()
-        self.pdf = PdfFileReader(filename,strict=strict).getPage(0)
+        self.pdf = PdfFileReader(filename, strict=strict).getPage(0)
         self.content = StringIO.StringIO()
         self.parser = canvas.Canvas(self.content, pagesize=(letter if pageSize == 'letter' else legal))
 
@@ -36,7 +37,7 @@ class PdfEditor(object):
         '''
         self.parser.setFontSize(int(size))
 
-    def save(self, filename):
+    def save(self, filename, write_file=True):
         '''Args:
             filename (str): Name of the file to be saved.
         '''
@@ -46,5 +47,10 @@ class PdfEditor(object):
         output = PdfFileWriter()
         self.pdf.mergePage(text.getPage(0))
         output.addPage(self.pdf)
-        outputStream = open(filename, 'wb')
-        output.write(outputStream)
+        if write_file:
+	        outputStream = open(filename, 'wb')
+	        output.write(outputStream)
+        else:
+	        outputStream = io.BytesIO()
+	        output.write(outputStream)
+	        return outputStream
